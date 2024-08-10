@@ -28,7 +28,7 @@ class AuthController extends Controller
         $data = $request->except('confirm_password', 'password');
         $data['password'] = bcrypt($request->password);
         User::create($data);
-        return redirect('/');
+        return redirect('/books');
     }
 
     public function authenticate(Request $request) {
@@ -41,7 +41,7 @@ class AuthController extends Controller
 
         $token = Auth::attempt($credentials);
         if ($token) {
-            return redirect('/home');
+            return redirect('/books');
         }
 
         return redirect('/login')->with('error', 'Username/Password is incorrect.');

@@ -1,4 +1,4 @@
-<header class="bg-[#F5F5F5] h-28 w-full fixed shadow-lg">
+<header class="bg-[#F5F5F5] z-50 h-28 w-full fixed shadow-lg">
     <nav class="flex justify-between items-center h-full">
         <div class="flex flex-row justify-between w-full font-semibold text-3xl px-10">
             <ul class="flex flex-row items-center gap-20">

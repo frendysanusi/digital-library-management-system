@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BooksExport;
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Models\BookCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BookController extends Controller
 {
@@ -19,9 +22,20 @@ class BookController extends Controller
         $filter = $request->query('category_selected');
         $categories = BookCategory::all();
         
-        $books = Book::when($filter, function ($query, $filter) {
+        $user = Auth::user();
+        $user_role = $user->role;
+
+        $booksQ = Book::when($filter, function ($query, $filter) {
             return $query->where('category_id', $filter);
-        })->with('category')->orderBy('created_at', 'desc')->get();
+        })->with('category')->orderBy('created_at', 'desc');
+
+        if ($user_role !== 'admin') {
+            $booksQ->whereHas('users', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            });
+        }
+
+        $books = $booksQ->get();
         
         return view('books.index', compact('books', 'categories'));
     }
@@ -53,7 +67,11 @@ class BookController extends Controller
             $validatedData['cover_image'] = $imagePath;
         }
 
-        Book::create($validatedData);
+        $book = Book::create($validatedData);
+
+        $user = Auth::user();
+        $book->users()->attach($user->id);
+
         return redirect()->route('books.index')->with('Buku berhasil ditambahkan');
     }
 
@@ -78,7 +96,19 @@ class BookController extends Controller
      */
     public function update(BookRequest $request, Book $book)
     {
-        $book->update($request->validated());
+        $validatedData = $request->validated();
+
+        if ($request->file('book_file')) {
+            $filePath = $request->file('book_file')->store('file', 'public');
+            $validatedData['book_file'] = $filePath;
+        }
+
+        if ($request->file('cover_image')) {
+            $imagePath = $request->file('cover_image')->store('images', 'public');
+            $validatedData['cover_image'] = $imagePath;
+        }
+
+        $book->update($validatedData);
         return redirect()->route('books.index');
     }
 
@@ -89,5 +119,13 @@ class BookController extends Controller
     {
         $book->delete();
         return redirect()->route('books.index');
+    }
+
+    /**
+    * @return \Illuminate\Support\Collection
+    */
+    public function export() 
+    {
+        return Excel::download(new BooksExport, 'books.xlsx');
     }
 }

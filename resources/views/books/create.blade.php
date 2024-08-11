@@ -14,7 +14,7 @@
                     </div>
                     <div class="mb-4">
                         <label for="category" class="block text-lg font-medium text-gray-700">Kategori</label>
-                        <select id="category{{ $book->id }}" name="category_id" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                        <select id="category" name="category_id" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
                             <option value="" disabled selected>Pilih Kategori</option>    
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">

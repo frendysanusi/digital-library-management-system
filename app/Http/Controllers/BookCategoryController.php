@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookCategoryRequest;
 use App\Models\BookCategory;
-use Illuminate\Http\Request;
 
 class BookCategoryController extends Controller
 {
@@ -12,7 +12,8 @@ class BookCategoryController extends Controller
      */
     public function index()
     {
-        //
+        $bookCategories = BookCategory::orderBy('created_at', 'desc')->get();
+        return view('categories.index', compact('bookCategories'));
     }
 
     /**
@@ -20,15 +21,16 @@ class BookCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BookCategoryRequest $request)
     {
-        //
+        BookCategory::create($request->validated());
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -44,15 +46,16 @@ class BookCategoryController extends Controller
      */
     public function edit(BookCategory $bookCategory)
     {
-        //
+        return view('categories.edit', compact('bookCategory'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, BookCategory $bookCategory)
+    public function update(BookCategoryRequest $request, BookCategory $bookCategory)
     {
-        //
+        $bookCategory->update($request->validated());
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -60,6 +63,7 @@ class BookCategoryController extends Controller
      */
     public function destroy(BookCategory $bookCategory)
     {
-        //
+        $bookCategory->delete();
+        return redirect()->route('categories.index');
     }
 }

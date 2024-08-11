@@ -11,10 +11,14 @@ class Book extends Model
 
     protected $fillable = [
         'title',
-        'category',
+        'category_id',
         'description',
         'stock',
         'book_file',
         'cover_image'
     ];
+
+    public function category() {
+        return $this->belongsTo(BookCategory::class, 'category_id', 'id');
+    }
 }

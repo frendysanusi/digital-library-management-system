@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
+use App\Models\BookCategory;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -13,10 +14,16 @@ class BookController extends Controller
      * 
      * @return View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::all();
-        return view('books.index', compact('books'));
+        $filter = $request->query('category_selected');
+        $categories = BookCategory::all();
+        
+        $books = Book::when($filter, function ($query, $filter) {
+            return $query->where('category_id', $filter);
+        })->with('category')->orderBy('created_at', 'desc')->get();
+        
+        return view('books.index', compact('books', 'categories'));
     }
 
     /**
@@ -34,8 +41,20 @@ class BookController extends Controller
      */
     public function store(BookRequest $request)
     {
-        Book::create($request->validated());
-        return redirect()->route('books.index');
+        $validatedData = $request->validated();
+
+        if ($request->file('book_file')) {
+            $filePath = $request->file('book_file')->store('file', 'public');
+            $validatedData['book_file'] = $filePath;
+        }
+
+        if ($request->file('cover_image')) {
+            $imagePath = $request->file('cover_image')->store('images', 'public');
+            $validatedData['cover_image'] = $imagePath;
+        }
+
+        Book::create($validatedData);
+        return redirect()->route('books.index')->with('Buku berhasil ditambahkan');
     }
 
     /**

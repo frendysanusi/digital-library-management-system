@@ -23,7 +23,7 @@ class BookRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
+            'category_id' => 'required',
             'description' => 'required|string',
             'stock' => 'required|integer',
             'book_file' => 'nullable|file|mimes:pdf',

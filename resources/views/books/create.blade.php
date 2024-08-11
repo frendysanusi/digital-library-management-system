@@ -14,23 +14,30 @@
                     </div>
                     <div class="mb-4">
                         <label for="category" class="block text-lg font-medium text-gray-700">Kategori</label>
-                        <input type="text" id="category" name="category" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                        <select id="category{{ $book->id }}" name="category_id" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                            <option value="" disabled selected>Pilih Kategori</option>    
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-4">
                         <label for="description" class="block text-lg font-medium text-gray-700">Deskripsi</label>
                         <textarea id="description" name="description" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" rows="4" required></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="stock" class="block text-lg font-medium text-gray-700">Stok</label>
+                        <label for="stock" class="block text-lg font-medium text-gray-700">Jumlah</label>
                         <input type="number" id="stock" name="stock" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
                     </div>
                     <div class="mb-4">
                         <label for="book_file" class="block text-lg font-medium text-gray-700">File Buku (PDF)</label>
-                        <input type="file" id="book_file" name="book_file" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" accept=".pdf" required>
+                        <input type="file" id="book_file" name="book_file" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" accept=".pdf">
                     </div>
                     <div class="mb-4">
-                        <label for="cover_image" class="block text-lg font-medium text-gray-700">Cover Buku (JPG/PNG)</label>
-                        <input type="file" id="cover_image" name="cover_image" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" accept=".jpg,.jpeg,.png" required>
+                        <label for="cover_image" class="block text-lg font-medium text-gray-700">Cover Buku (JPEG/JPG/PNG)</label>
+                        <input type="file" id="cover_image" name="cover_image" class="mt-1 p-2 border border-gray-300 rounded-lg w-full" accept=".jpg,.jpeg,.png">
                     </div>
                     <div class="flex justify-end">
                         <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2" onclick="toggleModal('addBookModal')">Batal</button>
